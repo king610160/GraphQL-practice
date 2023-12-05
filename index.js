@@ -41,7 +41,6 @@ const resolvers = {
         }
     },
     Review: {
-        // why cannot use filter here
         author(parent){
             return db.authors.find((a) => a.id === parent.author_id)
             // return db.authors.filter((a) => a.id === parent.author_id)[0] // this can, but need to further check
@@ -51,9 +50,26 @@ const resolvers = {
         }
     },
     Mutation: {
-        deleteGame(_,args){
+        deleteGame(_, args){
             db.games = db.games.filter((g) => g.id !== args.id)
             return db.games
+        },
+        addGame(_, args){
+            const game = {
+                ...args.game,
+                id: Math.floor(Math.random() * 10000).toString()
+            }
+
+            db.games.push(game)
+            return game
+        },
+        updateGame(_, args){
+            db.games = db.games.map((g) => {
+                if (g.id === args.id) return {...g, ...args.edits}
+                return g
+            })
+
+            return db.games.find((g) => g.id === args.id)
         }
     }
 }
