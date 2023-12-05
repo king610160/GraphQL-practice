@@ -29,6 +29,32 @@ const resolvers = {
         author(_, args){
             return db.authors.find((author) => author.id === args.id)
         }
+    },
+    Game: {
+        reviews(parent){
+            return db.reviews.filter((r) => r.game_id === parent.id)
+        }
+    },
+    Author: {
+        reviews(parent){
+            return db.reviews.filter((r) => r.author_id === parent.id)
+        }
+    },
+    Review: {
+        // why cannot use filter here
+        author(parent){
+            return db.authors.find((a) => a.id === parent.author_id)
+            // return db.authors.filter((a) => a.id === parent.author_id)[0] // this can, but need to further check
+        },
+        game(parent){
+            return db.games.find((g) => g.id === parent.game_id)
+        }
+    },
+    Mutation: {
+        deleteGame(_,args){
+            db.games = db.games.filter((g) => g.id !== args.id)
+            return db.games
+        }
     }
 }
 
